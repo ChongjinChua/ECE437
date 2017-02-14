@@ -1,0 +1,14 @@
+@startuml
+
+[*] -up-> I
+
+I -up-> S: PrRd/BusRd
+S --> I: BusRdX/-
+S -up-> M: PrWr/BusRdX
+M --> M: PrRd/- PrWr/-
+I --> M: PrWr/BusRdX
+M --> S: BusRd/BusWB
+S --> S: PrRd/- BusRd/-
+M --> I: BusRdX/BusWB
+
+@enduml

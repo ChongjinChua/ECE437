@@ -1,0 +1,23 @@
+@startuml
+
+[*] --> IDLE
+
+IDLE --> SNOOP1: cctrans[target]
+
+IDLE --> INSTR: ccif.iREN[target]
+SNOOP1 --> SNOOP2: 1
+SNOOP2 --> DATA: 1
+
+DATA --> IDLE: !(ccif.dREN[target] | ccif.dWEN[~target])
+INSTR -right-> IDLE : ~ccif.iwait[target]
+
+IDLE : arbitrate target
+
+SNOOP1 : ccwait[~target] = 1
+SNOOP1 : ccinv[~target] = ccwrite[target]
+SNOOP2 : ccwait[~target] = 1
+SNOOP2 : ccinv[~target] = ccwrite[target]
+
+DATA : if(dREN0 & dWEN1) then c-c xfer
+INSTR : connect icache to memory
+@enduml

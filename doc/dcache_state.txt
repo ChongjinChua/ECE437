@@ -1,0 +1,34 @@
+@startuml
+
+[*] --> IDLE
+
+IDLE --> IDLE: (dcif.dmemren | dcif.dmemwen) & hit
+IDLE --> INSPECT: halt
+IDLE --> SNOOPDOGG: cif.ccwait
+INSPECT --> INSPECT: ~dirty
+INSPECT --> HITC: count==16
+HITC --> HALT: ~cif.dwait
+INSPECT --> FLUSH1: dirty
+FLUSH1 --> FLUSH2: ~cif.dwait
+FLUSH2 --> INSPECT: ~cif.dwait
+
+IDLE --> SW1: (dcif.dmemren | dcif.dmemwen) & ~hit & dirty
+SW1 --> SW2: ~dcif.dwait
+SW1 --> SNOOPDOGG: cif.ccwait
+SW2 --> LW1: ~dcif.dwait
+LW1 --> LW2: ~dcif.dwait
+LW1 --> SNOOPDOGG: cif.ccwait
+LW2 --> IDLE
+IDLE --> LW1: (dcif.dmemren | dcif.dmemwen) & ~hit & ~dirty
+
+
+IDLE --> SNOOPDOGG: cif.ccwait
+SNOOPDOGG --> WB1: modified
+SNOOPDOGG --> IDLE: not modified
+WB1 --> WB2: ~dcif.dwait
+WB2 --> IDLE: ~dcif.dwait
+
+SNOOPDOGG: if(modified) nextdWEN=1;
+WB2: dwen=1
+
+@enduml

@@ -1,0 +1,10 @@
+@startuml
+
+
+[*] --> GIV
+REQ --> GIV : ~cif.iwait
+GIV --> GIV : ~dcif.imemREN | cacheHit
+GIV --> REQ : dcif.imemREN & ~cacheHit
+
+REQ --> REQ: cif.iwait
+@enduml
